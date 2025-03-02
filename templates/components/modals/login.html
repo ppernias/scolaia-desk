@@ -1,0 +1,64 @@
+<!--
+    Login Modal Component
+    
+    This component implements the login functionality through a Bootstrap modal dialog.
+    It provides a clean and secure interface for user authentication.
+
+    Features:
+    - Email-based authentication
+    - Secure password input
+    - Form validation
+    - Responsive design
+    - Accessible UI elements
+
+    Integration:
+    - Uses Bootstrap's modal system
+    - Connects with the authentication API endpoints
+    - Handled by auth.js for form submission and validation
+
+    Security:
+    - Client-side validation for required fields
+    - Password field properly masked
+    - CSRF protection via form token (handled by JS)
+-->
+{% block login_modal %}
+<!-- Login Dialog -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Login</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <!-- Login Form -->
+            <div class="modal-body">
+                <form id="loginForm" novalidate>
+                    <!-- Email Field -->
+                    <div class="mb-3">
+                        <label for="loginEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="loginEmail" 
+                               name="email" required 
+                               aria-describedby="emailHelp"
+                               autocomplete="email">
+                    </div>
+                    
+                    <!-- Password Field -->
+                    <div class="mb-3">
+                        <label for="loginPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="loginPassword" 
+                               name="password" required
+                               autocomplete="current-password">
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary">
+                        Login
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

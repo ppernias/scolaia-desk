@@ -1,0 +1,134 @@
+/* 
+ * Estilos neomórficos para el panel de administración
+ * Complementa los estilos neomórficos generales para mantener consistencia en la interfaz
+ */
+
+/* Estilos para los botones en la pestaña de asistente */
+.btn-success {
+    background: #28a745;
+    color: white;
+    box-shadow: 
+        6px 6px 12px var(--neo-shadow-dark),
+        -6px -6px 12px var(--neo-shadow-light);
+    border: none;
+    border-radius: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+    background: #218838;
+    box-shadow: 
+        4px 4px 8px var(--neo-shadow-dark),
+        -4px -4px 8px var(--neo-shadow-light);
+    transform: translateY(-2px);
+}
+
+.btn-success:active {
+    background: #1e7e34;
+    box-shadow: 
+        inset 4px 4px 8px rgba(0, 0, 0, 0.2),
+        inset -2px -2px 6px rgba(255, 255, 255, 0.1);
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    box-shadow: 
+        6px 6px 12px var(--neo-shadow-dark),
+        -6px -6px 12px var(--neo-shadow-light);
+    border: none;
+    border-radius: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    box-shadow: 
+        4px 4px 8px var(--neo-shadow-dark),
+        -4px -4px 8px var(--neo-shadow-light);
+    transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+    background: #545b62;
+    box-shadow: 
+        inset 4px 4px 8px rgba(0, 0, 0, 0.2),
+        inset -2px -2px 6px rgba(255, 255, 255, 0.1);
+    transform: translateY(0);
+}
+
+.btn-info {
+    background: #17a2b8;
+    color: white;
+    box-shadow: 
+        6px 6px 12px var(--neo-shadow-dark),
+        -6px -6px 12px var(--neo-shadow-light);
+    border: none;
+    border-radius: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+.btn-info:hover {
+    background: #138496;
+    box-shadow: 
+        4px 4px 8px var(--neo-shadow-dark),
+        -4px -4px 8px var(--neo-shadow-light);
+    transform: translateY(-2px);
+}
+
+.btn-info:active {
+    background: #117a8b;
+    box-shadow: 
+        inset 4px 4px 8px rgba(0, 0, 0, 0.2),
+        inset -2px -2px 6px rgba(255, 255, 255, 0.1);
+    transform: translateY(0);
+}
+
+/* Ajustes específicos para el panel de administración */
+#assistantConfig {
+    height: 500px;
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-x: scroll;
+    background-color: var(--neo-inset-bg);
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 
+        inset 3px 3px 6px var(--neo-shadow-dark),
+        inset -3px -3px 6px var(--neo-shadow-light);
+    padding: 0.75rem 1rem;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    font-family: monospace;
+}
+
+#assistantConfig:focus {
+    box-shadow: 
+        inset 4px 4px 8px var(--neo-shadow-dark),
+        inset -4px -4px 8px var(--neo-shadow-light),
+        0 0 0 3px rgba(130, 93, 77, 0.1);
+    border: none;
+    outline: none;
+}
+
+#assistant .form-control {
+    background-color: var(--neo-inset-bg);
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 
+        inset 3px 3px 6px var(--neo-shadow-dark),
+        inset -3px -3px 6px var(--neo-shadow-light);
+    padding: 0.75rem 1rem;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+#assistant .form-control:focus {
+    box-shadow: 
+        inset 4px 4px 8px var(--neo-shadow-dark),
+        inset -4px -4px 8px var(--neo-shadow-light),
+        0 0 0 3px rgba(130, 93, 77, 0.1);
+    border: none;
+    outline: none;
+}

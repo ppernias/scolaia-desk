@@ -1,0 +1,229 @@
+/* Main styles */
+:root {
+    --primary-color: #825D4D; /* MOKA Pantone 18-1260 */
+    --primary-light: #A67F6F; /* Lighter shade of MOKA */
+    --primary-dark: #5E432F; /* Darker shade of MOKA */
+    --secondary-color: #2F3640; /* Dark complement */
+    --accent-color: #D4B5A6; /* Light complement */
+    --text-color: #2F3640;
+    --text-muted: #6C757D;
+    --bg-light: #F8F5F3; /* Very light warm gray */
+    --brand-color: #009999; /* Teal color for brand */
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f1c40f;
+    --info-color: #3498db;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    color: var(--text-color);
+}
+
+/* Main content container */
+.main-content {
+    min-height: calc(100vh - 70px);
+    width: 100%;
+    position: relative;
+}
+
+/* Navbar styles */
+.navbar {
+    background-color: white;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-family: 'Audiowide', cursive;
+    color: var(--brand-color) !important;
+    font-weight: 400;
+    font-size: 1.75rem;
+    letter-spacing: 1px;
+    text-transform: none;
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+}
+
+.navbar-brand .brand-surname {
+    margin-left: 5px;
+}
+
+.nav-link {
+    color: var(--secondary-color) !important;
+    font-weight: 500;
+}
+
+/* Button styles */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* Form styles */
+.form-control {
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    border-color: #DED5D0;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(130, 93, 77, 0.25);
+}
+
+/* Modal styles */
+.modal-content {
+    border-radius: 15px;
+    border: none;
+}
+
+.modal-header {
+    border-bottom: 2px solid var(--bg-light);
+}
+
+/* Alert styles */
+.alert {
+    border-radius: 10px;
+}
+
+/* Card styles */
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Utility classes */
+.bg-light {
+    background-color: var(--bg-light) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.feature-icon {
+    color: var(--primary-color);
+}
+
+.brand-text {
+    font-family: 'Audiowide', cursive;
+    color: var(--brand-color);
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+.brand-surname {
+    font-family: 'Allura', cursive;
+    color: #fa0000;
+    font-weight: 400;
+    font-size: 1.2em;
+}
+
+/* Footer styles */
+footer {
+    background-color: var(--bg-light);
+    color: var(--text-muted);
+}
+
+/* Chat styles */
+.chat-container {
+    height: 70vh;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: #fff;
+}
+
+.chat-container-wrapper {
+    height: calc(100vh - 100px); /* Restar el espacio del header y márgenes */
+    padding: 1rem;
+}
+
+.chat-container-wrapper .card-header {
+    background-color: var(--primary-color);
+}
+
+.chat-container-wrapper .card-body {
+    background-color: var(--bg-light);
+}
+
+.message {
+    max-width: 80%;
+    margin-bottom: 1rem;
+}
+
+.message.user {
+    margin-left: auto;
+}
+
+.message.assistant {
+    margin-right: auto;
+}
+
+.message-content {
+    padding: 0.75rem;
+    border-radius: 8px;
+}
+
+.message.user .message-content {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.message.assistant .message-content {
+    background-color: var(--bg-light);
+    color: var(--text-color);
+}
+
+/* Toast container */
+#toastContainer {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1050;
+}
+
+/* Admin panel styles */
+.admin-card {
+    transition: transform 0.2s;
+}
+
+.admin-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .message {
+        max-width: 90%;
+    }
+    
+    .chat-container {
+        height: 60vh;
+    }
+}

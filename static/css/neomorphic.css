@@ -1,0 +1,696 @@
+/* 
+ * Diseño Neomórfico de Scolaia
+ * Este archivo contiene estilos neomórficos para la aplicación Scolaia
+ * manteniendo la paleta Moka y un diseño plano
+ */
+
+:root {
+    /* Mantenemos la paleta Moka original */
+    --primary-color: #825D4D; /* MOKA Pantone 18-1260 */
+    --primary-light: #A67F6F; /* Lighter shade of MOKA */
+    --primary-dark: #5E432F; /* Darker shade of MOKA */
+    --secondary-color: #2F3640; /* Dark complement */
+    --accent-color: #D4B5A6; /* Light complement */
+    --text-color: #2F3640;
+    --text-muted: #6C757D;
+    --bg-light: #F8F5F3; /* Very light warm gray */
+    --brand-color: #009999; /* Teal color for brand */
+    
+    /* Nuevas variables para neomorfismo */
+    --neo-shadow-light: rgba(255, 255, 255, 0.7);
+    --neo-shadow-dark: rgba(130, 93, 77, 0.15);
+    --neo-bg: #F0EBE8; /* Fondo ligeramente más oscuro para el neomorfismo */
+    --neo-inset-bg: #F5F0ED; /* Fondo para elementos hundidos */
+}
+
+/* ===== ESTILOS GLOBALES ===== */
+body {
+    background-color: var(--neo-bg);
+}
+
+.main-content {
+    background-color: var(--neo-bg);
+}
+
+/* ===== COMPONENTES COMUNES ===== */
+
+/* Tarjetas */
+.card {
+    background-color: var(--neo-bg);
+    border: none;
+    border-radius: 1.5rem;
+    box-shadow: 
+        8px 8px 16px var(--neo-shadow-dark),
+        -8px -8px 16px var(--neo-shadow-light);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 
+        10px 10px 20px var(--neo-shadow-dark),
+        -10px -10px 20px var(--neo-shadow-light);
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: none;
+}
+
+.card-body {
+    background-color: var(--neo-bg);
+}
+
+.card-footer {
+    background-color: transparent;
+    border-top: none;
+}
+
+/* Botones */
+.btn {
+    border: none;
+    border-radius: 1.25rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 
+        6px 6px 12px var(--neo-shadow-dark),
+        -6px -6px 12px var(--neo-shadow-light);
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    box-shadow: 
+        4px 4px 8px var(--neo-shadow-dark),
+        -4px -4px 8px var(--neo-shadow-light);
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    background: var(--primary-dark);
+    box-shadow: 
+        inset 4px 4px 8px rgba(0, 0, 0, 0.2),
+        inset -2px -2px 6px rgba(255, 255, 255, 0.1);
+    transform: translateY(0);
+}
+
+.btn-outline-primary {
+    background-color: var(--neo-bg);
+    color: var(--primary-color);
+    box-shadow: 
+        6px 6px 12px var(--neo-shadow-dark),
+        -6px -6px 12px var(--neo-shadow-light);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 
+        4px 4px 8px var(--neo-shadow-dark),
+        -4px -4px 8px var(--neo-shadow-light);
+    transform: translateY(-2px);
+}
+
+.btn-outline-secondary {
+    background-color: var(--neo-bg);
+    color: var(--primary-color);
+    box-shadow: 
+        6px 6px 12px var(--neo-shadow-dark),
+        -6px -6px 12px var(--neo-shadow-light);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--neo-inset-bg);
+    color: var(--primary-dark);
+    box-shadow: 
+        4px 4px 8px var(--neo-shadow-dark),
+        -4px -4px 8px var(--neo-shadow-light);
+}
+
+/* Formularios */
+.form-control {
+    background-color: var(--neo-inset-bg);
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 
+        inset 3px 3px 6px var(--neo-shadow-dark),
+        inset -3px -3px 6px var(--neo-shadow-light);
+    padding: 0.75rem 1rem;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    box-shadow: 
+        inset 4px 4px 8px var(--neo-shadow-dark),
+        inset -4px -4px 8px var(--neo-shadow-light),
+        0 0 0 3px rgba(130, 93, 77, 0.1);
+    border: none;
+    outline: none;
+}
+
+.input-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px; /* Espacio entre los elementos */
+}
+
+.input-group .btn {
+    border-radius: 1.25rem !important;
+    height: 50px; /* Altura fija para los botones */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 
+        3px 3px 6px var(--neo-shadow-dark),
+        -3px -3px 6px var(--neo-shadow-light);
+    margin-top: 15px; /* Alinear verticalmente con el textarea */
+}
+
+.input-group {
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 
+        6px 6px 12px var(--neo-shadow-dark),
+        -6px -6px 12px var(--neo-shadow-light);
+}
+
+#messageInputContainer {
+    display: flex;
+    align-items: flex-start !important;
+    padding: 0.5rem;
+    min-height: 55px;
+    border-radius: 1.25rem !important;
+    flex-grow: 1; /* Que ocupe el espacio disponible */
+    background-color: var(--neo-inset-bg);
+    box-shadow: 
+        inset 3px 3px 6px var(--neo-shadow-dark),
+        inset -3px -3px 6px var(--neo-shadow-light);
+}
+
+#messageInputContainer textarea {
+    border: none;
+    padding: 0.5rem;
+    min-height: 55px;
+    max-height: 150px;
+    overflow-y: auto;
+    resize: none;
+    line-height: 1.5;
+    white-space: pre-wrap !important;
+    word-wrap: break-word;
+    flex-grow: 1;
+    background: transparent;
+    color: var(--text-color);
+}
+
+#chatForm .form-control,
+#wsChatForm .form-control,
+#streamChatForm .form-control {
+    background-color: var(--neo-inset-bg);
+    border: none;
+    border-radius: 1.25rem !important;
+    box-shadow: 
+        inset 3px 3px 6px var(--neo-shadow-dark),
+        inset -3px -3px 6px var(--neo-shadow-light);
+    padding: 1rem 1.25rem;
+    color: var(--text-color);
+    min-height: 80px; /* Altura mínima para tres líneas */
+    resize: none; /* Evitar que el usuario pueda redimensionar */
+    overflow-y: auto; /* Permitir scroll si el texto es más largo */
+    line-height: 1.5; /* Mejorar el espaciado entre líneas */
+    white-space: pre-wrap !important; /* Permitir que el texto se envuelva y preservar espacios */
+    word-wrap: break-word; /* Romper palabras largas */
+    height: auto; /* Permitir que la altura se ajuste al contenido */
+    max-height: 150px; /* Limitar la altura máxima */
+}
+
+/* Navbar */
+.navbar {
+    background-color: var(--neo-bg);
+    box-shadow: 0 4px 12px var(--neo-shadow-dark);
+}
+
+.navbar-brand {
+    transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+    text-shadow: 2px 2px 4px var(--neo-shadow-dark);
+}
+
+.nav-link {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--primary-color) !important;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: var(--primary-color);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+    width: 70%;
+}
+
+/* Modales */
+.modal-content {
+    background-color: var(--neo-bg);
+    border: none;
+    border-radius: 1.5rem;
+    box-shadow: 
+        12px 12px 24px var(--neo-shadow-dark),
+        -12px -12px 24px var(--neo-shadow-light);
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(130, 93, 77, 0.1);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(130, 93, 77, 0.1);
+}
+
+.close {
+    color: var(--primary-color);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.close:hover {
+    color: var(--primary-dark);
+    opacity: 1;
+}
+
+/* Dropdown */
+.dropdown-menu {
+    background-color: var(--neo-bg);
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 
+        8px 8px 16px var(--neo-shadow-dark),
+        -8px -8px 16px var(--neo-shadow-light);
+    padding: 0.75rem 0;
+}
+
+.dropdown-item {
+    color: var(--text-color);
+    padding: 0.5rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background-color: var(--neo-inset-bg);
+    color: var(--primary-color);
+}
+
+/* Alertas */
+.alert {
+    background-color: var(--neo-bg);
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 
+        6px 6px 12px var(--neo-shadow-dark),
+        -6px -6px 12px var(--neo-shadow-light);
+}
+
+/* Badges */
+.badge {
+    border-radius: 1rem;
+    padding: 0.5rem 0.75rem;
+    box-shadow: 
+        2px 2px 4px var(--neo-shadow-dark),
+        -2px -2px 4px var(--neo-shadow-light);
+}
+
+/* ===== ESTILOS ESPECÍFICOS DE CHAT ===== */
+
+/* Estilos neomórficos para la tarjeta principal */
+.chat-container-wrapper > .card {
+    background-color: var(--neo-bg);
+    border: none;
+    box-shadow: 
+        12px 12px 24px var(--neo-shadow-dark),
+        -12px -12px 24px var(--neo-shadow-light);
+    overflow: hidden;
+}
+
+/* Header del chat con estilo neomórfico */
+.header-main {
+    background-color: var(--primary-color);
+    border-radius: 1.5rem 1.5rem 0 0 !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-tools {
+    background-color: var(--neo-bg);
+    border-bottom: none;
+    box-shadow: inset 0 2px 5px var(--neo-shadow-dark);
+}
+
+/* Contenedor de mensajes con estilo neomórfico */
+.card-body {
+    background-color: var(--neo-bg);
+}
+
+.chat-messages {
+    padding: 1.5rem;
+}
+
+/* Estilos neomórficos para mensajes */
+.message {
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.user-message {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 1.5rem;
+    border-bottom-right-radius: 0.5rem;
+    box-shadow: 
+        6px 6px 12px var(--neo-shadow-dark),
+        -6px -6px 12px var(--neo-shadow-light);
+}
+
+.assistant-message {
+    background-color: var(--neo-inset-bg);
+    color: var(--text-color);
+    border-radius: 1.5rem;
+    border-bottom-left-radius: 0.5rem;
+    border: none;
+    box-shadow: 
+        inset 4px 4px 8px var(--neo-shadow-dark),
+        inset -4px -4px 8px var(--neo-shadow-light);
+}
+
+/* Estilos neomórficos para código */
+.assistant-message pre {
+    background-color: var(--neo-bg);
+    border-radius: 1rem;
+    box-shadow: 
+        inset 3px 3px 6px var(--neo-shadow-dark),
+        inset -3px -3px 6px var(--neo-shadow-light);
+    margin: 1rem 0;
+}
+
+.assistant-message code {
+    color: var(--primary-color);
+    background-color: rgba(130, 93, 77, 0.1);
+    border-radius: 0.3rem;
+}
+
+/* Formulario de chat neomórfico */
+#chatForm .input-group,
+#wsChatForm .input-group,
+#streamChatForm .input-group {
+    background-color: var(--neo-bg);
+    padding: 0.5rem;
+    border-radius: 1.5rem;
+    box-shadow: 
+        inset 4px 4px 8px var(--neo-shadow-dark),
+        inset -4px -4px 8px var(--neo-shadow-light);
+    align-items: flex-start; /* Alinear elementos al inicio para textarea */
+}
+
+#chatForm .form-control,
+#wsChatForm .form-control,
+#streamChatForm .form-control {
+    background-color: var(--neo-inset-bg);
+    border: none;
+    border-radius: 1.25rem !important;
+    box-shadow: 
+        inset 3px 3px 6px var(--neo-shadow-dark),
+        inset -3px -3px 6px var(--neo-shadow-light);
+    padding: 1rem 1.25rem;
+    color: var(--text-color);
+    min-height: 80px; /* Altura mínima para tres líneas */
+    resize: none; /* Evitar que el usuario pueda redimensionar */
+    overflow-y: auto; /* Permitir scroll si el texto es más largo */
+    line-height: 1.5; /* Mejorar el espaciado entre líneas */
+    white-space: pre-wrap !important; /* Permitir que el texto se envuelva y preservar espacios */
+    word-wrap: break-word; /* Romper palabras largas */
+    height: auto; /* Permitir que la altura se ajuste al contenido */
+    max-height: 150px; /* Limitar la altura máxima */
+}
+
+#chatForm .form-control:focus,
+#wsChatForm .form-control:focus,
+#streamChatForm .form-control:focus {
+    outline: none;
+    box-shadow: 
+        inset 4px 4px 8px var(--neo-shadow-dark),
+        inset -4px -4px 8px var(--neo-shadow-light);
+}
+
+/* Ajustar el botón de enviar para alinearlo verticalmente */
+#chatForm #sendButton,
+#wsChatForm #sendButton,
+#streamChatForm #sendButton {
+    align-self: stretch; /* Estirar el botón para que coincida con la altura del textarea */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ajustar el botón de adjuntar para alinearlo verticalmente */
+#chatForm #attachButton,
+#wsChatForm #attachButton,
+#streamChatForm #attachButton {
+    align-self: stretch; /* Estirar el botón para que coincida con la altura del textarea */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--neo-bg);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 5px;
+    box-shadow: 
+        inset 2px 2px 4px rgba(255, 255, 255, 0.3),
+        inset -2px -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* ADL Helper con estilo neomórfico */
+.adl-helper {
+    background-color: var(--neo-inset-bg);
+    border-radius: 1.25rem;
+    box-shadow: 
+        inset 4px 4px 8px var(--neo-shadow-dark),
+        inset -4px -4px 8px var(--neo-shadow-light);
+    padding: 1rem;
+    margin-top: 1.5rem;
+}
+
+.adl-helper-header {
+    border-bottom: 1px solid rgba(130, 93, 77, 0.2);
+    padding-bottom: 0.5rem;
+}
+
+.adl-helper-title {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.adl-tab {
+    border-radius: 0.75rem;
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.adl-tab.active {
+    background-color: var(--neo-bg);
+    color: var(--primary-color);
+    box-shadow: 
+        4px 4px 8px var(--neo-shadow-dark),
+        -4px -4px 8px var(--neo-shadow-light);
+    border: none;
+}
+
+.badge-command, .badge-option, .badge-decorator {
+    border-radius: 1rem;
+    padding: 0.5rem 1rem;
+    box-shadow: 
+        4px 4px 8px var(--neo-shadow-dark),
+        -4px -4px 8px var(--neo-shadow-light);
+    transition: all 0.3s ease;
+}
+
+.badge-command:hover, .badge-option:hover, .badge-decorator:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        6px 6px 12px var(--neo-shadow-dark),
+        -6px -6px 12px var(--neo-shadow-light);
+}
+
+/* Estilos para archivos adjuntos */
+.file-attachment {
+    background-color: rgba(130, 93, 77, 0.1);
+    border-radius: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    margin-top: 0.75rem;
+    box-shadow: 
+        inset 2px 2px 4px var(--neo-shadow-dark),
+        inset -2px -2px 4px var(--neo-shadow-light);
+}
+
+/* Toast con estilo neomórfico */
+.toast {
+    background-color: var(--neo-bg);
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 
+        6px 6px 12px var(--neo-shadow-dark),
+        -6px -6px 12px var(--neo-shadow-light);
+}
+
+.toast-header {
+    background-color: var(--neo-inset-bg);
+    border-bottom: none;
+    border-radius: 1rem 1rem 0 0;
+}
+
+/* ===== ESTILOS PARA PÁGINAS ESPECÍFICAS ===== */
+
+/* Página de inicio */
+.hero-section {
+    background-color: var(--neo-bg);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 
+        8px 8px 16px var(--neo-shadow-dark),
+        -8px -8px 16px var(--neo-shadow-light);
+}
+
+/* Página de administración */
+.admin-card {
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+}
+
+.admin-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Tablas */
+.table {
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 
+        6px 6px 12px var(--neo-shadow-dark),
+        -6px -6px 12px var(--neo-shadow-light);
+}
+
+.table thead th {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.table tbody td {
+    border-color: rgba(130, 93, 77, 0.1);
+}
+
+.table tbody tr:hover {
+    background-color: var(--neo-inset-bg);
+}
+
+/* Estilos específicos para la tabla de usuarios en el panel de administración */
+#users .table th, #users .table td {
+    padding: 0.5rem 0.5rem; /* Reducir el padding horizontal */
+    font-size: 0.9rem; /* Reducir el tamaño de la fuente */
+}
+
+#users .table th[data-sort="id"] {
+    width: 40px !important; /* Reducir el ancho de la columna ID */
+}
+
+#users .table th[data-sort="fullname"],
+#users .table th[data-sort="email"] {
+    width: 150px !important; /* Reducir el ancho de las columnas de nombre y email */
+}
+
+#users .table th[data-sort="status"],
+#users .table th[data-sort="is_admin"],
+#users .table th[data-sort="token_count"] {
+    width: 80px !important; /* Reducir el ancho de las columnas de estado, rol y tokens */
+}
+
+#users .table th[data-sort="creation_date"],
+#users .table th[data-sort="last_login"] {
+    width: 100px !important; /* Reducir el ancho de las columnas de fechas */
+}
+
+#users .table th:last-child {
+    width: 120px !important; /* Reducir el ancho de la columna de acciones */
+}
+
+/* Mejora para dispositivos pequeños */
+@media (max-width: 1200px) {
+    #users .table th, #users .table td {
+        padding: 0.4rem 0.4rem;
+        font-size: 0.85rem;
+    }
+    
+    #users .table th[data-sort="id"] {
+        width: 35px !important;
+    }
+    
+    #users .table th[data-sort="fullname"],
+    #users .table th[data-sort="email"] {
+        width: 130px !important;
+    }
+    
+    #users .table th[data-sort="status"],
+    #users .table th[data-sort="is_admin"],
+    #users .table th[data-sort="token_count"] {
+        width: 70px !important;
+    }
+    
+    #users .table th[data-sort="creation_date"],
+    #users .table th[data-sort="last_login"] {
+        width: 90px !important;
+    }
+    
+    #users .table th:last-child {
+        width: 110px !important;
+    }
+}
+
+/* Para dispositivos muy pequeños, asegurar que el contenedor tenga scroll horizontal */
+#users .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+}

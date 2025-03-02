@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/chat.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap">
+{% endblock %}
+
+{% block title %}Chat - ScolaIA{% endblock %}
+
+{% block extra_css %}
+<link href="/static/css/custom.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="chat-container-wrapper">
+    <div class="card border-0 shadow-sm h-100">
+        <div class="card-header">
+            <div class="header-main">
+                <h5 class="card-title mb-0 text-white flex-grow-1">
+                    <span class="chat-title">Chat with </span>
+                    <span class="assistant-title">{{ assistant_name }}</span>
+                </h5>
+            </div>
+        </div>
+        <div class="card-body d-flex flex-column h-100">
+            <!-- Chat Messages Container -->
+            <div id="wsChatMessages" class="chat-messages flex-grow-1 mb-3">
+                <!-- Messages will be added here dynamically -->
+            </div>
+
+            <!-- Chat Input Form -->
+            <form id="wsChatForm">
+                <div class="input-group">
+                    <label for="fileInput" class="btn btn-outline-secondary file-upload-btn" title="Attach file">
+                        <i class="fas fa-paperclip"></i>
+                        <input type="file" id="fileInput" class="d-none" accept=".pdf,.docx,.txt" multiple>
+                    </label>
+                    <div class="form-control border-2 d-flex align-items-center" id="messageInputContainer">
+                        <div id="filePreview" class="d-none"></div>
+                        <textarea class="border-0 flex-grow-1" id="wsMessageInput" name="message" 
+                               placeholder="Write your message here... (Shift+Enter for new line)" required rows="3"></textarea>
+                    </div>
+                    <button class="btn btn-primary px-4" type="submit" id="wsSendButton">
+                        Send <i class="fas fa-paper-plane ms-2"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container for Notifications -->
+<div id="toastContainer" class="position-fixed top-0 end-0 p-3"></div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Load marked.js before our chat.js -->
+<script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+<script>
+    // Declare marked in the global scope for TypeScript
+    window.marked = window.marked || {};
+    
+    // Initialize marked
+    if (window.marked) {
+        window.marked.setOptions({
+            breaks: true,
+            gfm: true,
+            headerIds: false,
+            mangle: false
+        });
+    } else {
+        console.error("marked.js is not available");
+    }
+</script>
+<script src="/static/dist/chat/websocket.js"></script>
+<script src="/static/dist/chat/adlHelper.js"></script>
+<script src="/static/dist/chat/textarea-handler.js"></script>
+{% endblock %}
+ 

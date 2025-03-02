@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Chat - ScolaIA{% endblock %}
+
+{% block extra_css %}
+<!-- Font Awesome library for icons used throughout the chat interface -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<!-- Custom styles specific to the chat functionality -->
+<link href="/static/css/chat.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- Main chat interface container with responsive wrapper -->
+<!-- This section contains the main chat interface, including the chat header, body, and input form -->
+<div class="chat-container-wrapper">
+    <div class="card border-0 shadow-sm h-100">
+        <!-- Chat header with assistant information and potential tool buttons -->
+        <!-- This section displays the chat title, assistant name, and ID, as well as a placeholder for future tools and controls -->
+        <div class="card-header">
+            <div class="header-main">
+                <h5 class="card-title mb-0 text-white flex-grow-1">
+                    <span class="chat-title">Chat with</span>
+                    <span class="assistant-title">{{ assistant_name }}</span>
+                    <small class="assistant-id text-muted ms-2">({{ assistant_id }})</small>
+                </h5>
+            </div>
+            <div class="header-tools">
+                <!-- This area is prepared for future tools and controls -->
+            </div>
+        </div>
+        <!-- Main chat body containing message history and input form -->
+        <!-- This section contains the chat messages container and the input form for sending messages and uploading files -->
+        <div class="card-body d-flex flex-column h-100">
+            <!-- Chat Messages Container - Scrollable area where conversation history appears -->
+            <!-- This section will be populated with chat messages via JavaScript -->
+            <div id="chatMessages" class="chat-messages flex-grow-1 mb-3">
+                <!-- Messages will be dynamically inserted here via JavaScript -->
+            </div>
+
+            <!-- Chat Input Form - Contains file upload and message input controls -->
+            <!-- This section allows users to input messages, upload files, and send them to the conversation -->
+            <form id="chatForm">
+                <!-- Hidden file input that activates when the attachment button is clicked -->
+                <input type="file" class="d-none" id="fileInput" 
+                       accept=".pdf,.doc,.docx,.txt,.ppt,.py,.js,.java,.cpp,.c,.cs,.php,.rb,.go,.rs,.swift,.kt,.ts,.html,.css,.sql">
+                <div class="input-group">
+                    <!-- Attachment button for uploading files to the conversation -->
+                    <button type="button" class="btn btn-outline-secondary" id="attachButton">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <!-- Text input field for typing messages -->
+                    <textarea class="form-control border-2" id="messageInput" name="message" 
+                           placeholder="Escribe tu mensaje aquí... (Shift+Enter para nueva línea)" required></textarea>
+                    <!-- Send button with loading state indicator -->
+                    <button class="btn btn-primary px-4" type="submit" id="sendButton">
+                        <span class="button-content">
+                            Send <i class="fas fa-paper-plane ms-2"></i>
+                        </span>
+                        <span class="spinner d-none">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </button>
+                </div>
+                <!-- File information display area - Shows details about attached files -->
+                <small id="fileInfo" class="text-muted mt-1 d-block"></small>
+                <small id="selectedFileName" class="text-primary mt-1 d-block"></small>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container - Used for displaying notifications and alerts to the user -->
+<!-- This section is used to display toast notifications and alerts to the user -->
+<div id="toastContainer" class="position-fixed top-0 end-0 p-3"></div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Load marked.js for Markdown rendering in chat messages -->
+<!-- This script loads the marked.js library for rendering Markdown in chat messages -->
+<script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+<script type="module">
+    // Initialize marked library with configuration options for proper Markdown rendering
+    // This script initializes the marked.js library with configuration options for proper Markdown rendering
+    if (window.marked) {
+        window.marked.setOptions({
+            breaks: true,            // Convert line breaks to <br> elements
+            gfm: true,               // Enable GitHub Flavored Markdown support
+            headerIds: false,        // Disable automatic ID generation for headers
+            mangle: false            // Prevent escaping of HTML in the output
+        });
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script type="module" src="/static/dist/chat/ui.js"></script>
+<script type="module" src="/static/dist/chat/streaming.js"></script>
+<script src="/static/js/textarea-direct.js"></script>
+</body>
+{% endblock %}
