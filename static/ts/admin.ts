@@ -50,6 +50,8 @@ class AdminPanel {
         this.setupUserActionListeners();
         this.setupSettingActionListeners();
     }
+    
+
 
     private setupSearchListeners(): void {
         const searchButton = document.getElementById('searchButton');
@@ -154,12 +156,28 @@ class AdminPanel {
         
         if (userIdInput && modalElement) {
             userIdInput.value = userId.toString();
+            
+            // Configurar el event listener para el botu00f3n de confirmación de eliminación
+            // Esto es crucial: configuramos el event listener JUSTO ANTES de mostrar el modal
+            const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+            if (confirmDeleteButton) {
+                // Eliminar cualquier event listener existente para evitar duplicados
+                const newConfirmDeleteButton = confirmDeleteButton.cloneNode(true);
+                confirmDeleteButton.parentNode?.replaceChild(newConfirmDeleteButton, confirmDeleteButton);
+                
+                // Agregar el event listener al nuevo botu00f3n
+                newConfirmDeleteButton.addEventListener('click', () => {
+                    this.deleteUser();
+                });
+            }
+            
+            // Mostrar el modal
             const modal = new bootstrap.Modal(modalElement);
             modal.show();
         }
     }
 
-    private async deleteUser(): Promise<void> {
+    public async deleteUser(): Promise<void> {
         const userIdInput = document.getElementById('deleteUserId') as HTMLInputElement;
         const modalElement = document.getElementById('deleteConfirmationModal');
         
@@ -181,6 +199,9 @@ class AdminPanel {
         }
     }
 }
+
+// Variable global para almacenar la instancia de AdminPanel
+let adminPanelInstance: AdminPanel | null = null;
 
 // Initialize admin panel when DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
@@ -204,5 +225,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupFetchInterceptor();
     
     // Inicializar el panel de administración
-    const adminPanel = new AdminPanel();
+    adminPanelInstance = new AdminPanel();
+    
+    // Agregar un event listener global para detectar clics en el botón de confirmación de eliminación
+    document.addEventListener('click', async (e) => {
+        const target = e.target as HTMLElement;
+        if (target && target.getAttribute('data-action') === 'confirm-delete') {
+            console.log('Botón de confirmación de eliminación clickeado');
+            if (adminPanelInstance) {
+                await adminPanelInstance.deleteUser();
+            }
+        }
+    });
 });

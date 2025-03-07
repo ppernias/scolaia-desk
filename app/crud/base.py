@@ -58,7 +58,11 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return db_obj
 
     async def remove(self, db: AsyncSession, *, id: int) -> ModelType:
-        obj = await db.get(self.model, id)
+        # Primero obtenemos el objeto usando nuestro propio método get
+        obj = await self.get(db, id)
+        if obj is None:
+            raise ValueError(f"Object with id {id} not found")
+        # Luego lo eliminamos
         await db.delete(obj)
         await db.commit()
         return obj

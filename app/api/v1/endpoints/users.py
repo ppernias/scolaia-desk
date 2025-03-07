@@ -120,7 +120,64 @@ async def update_user(
             status_code=404,
             detail="User not found",
         )
+    
+    # Guardar el estado de aprobación antes de la actualización
+    was_approved_before = user_obj.is_approved
+    
+    # Actualizar el usuario
     user_obj = await user.update(db, db_obj=user_obj, obj_in=user_in)
+    
+    # Comprobar si el usuario ha sido aprobado en esta actualización
+    if not was_approved_before and user_obj.is_approved:
+        # El usuario ha sido aprobado, enviar correo de confirmación al administrador
+        try:
+            # Obtener configuración de correo electrónico
+            email_settings = await setting.get_by_category(db, "Email Configuration")
+            settings_dict = {s.key: s.value for s in email_settings}
+            
+            # Obtener configuración general
+            general_settings = await setting.get_by_category(db, "General")
+            settings_dict.update({s.key: s.value for s in general_settings})
+            
+            # Obtener la URL base de la configuración
+            base_url = settings_dict.get("server_host", settings_dict.get("SERVER_HOST", "http://localhost:8000"))
+            
+            # Asegurarse de que la URL esté correctamente formada
+            admin_url = base_url
+            if not admin_url.startswith('http'):
+                admin_url = f"http://{admin_url}"
+            
+            # Eliminar barras diagonales finales si existen
+            admin_url = admin_url.rstrip('/')
+            
+            # Contenido del correo electrónico
+            admin_email_content = f"""
+            Dear Administrator,
+            
+            This is a confirmation that the user account for {user_obj.fullname} ({user_obj.email}) has been successfully activated.
+            
+            The account was activated by: {current_user.fullname} ({current_user.email})
+            Activation time: {user_obj.creation_date}
+            
+            The user has been notified and can now access the system.
+            
+            You can access the system at: {admin_url}
+            
+            Best regards,
+            ScolaIA System
+            """
+            
+            # Enviar correo electrónico al administrador actual
+            await send_email(
+                email_to=current_user.email,
+                subject="ScolaIA - User Activation Confirmation",
+                content=admin_email_content,
+                settings_dict=settings_dict
+            )
+        except Exception as e:
+            # Log the error but don't fail the update process
+            print(f"Error sending confirmation email to admin: {str(e)}")
+    
     return User(
         id=user_obj.id,
         email=user_obj.email,

@@ -202,7 +202,7 @@
             <div class="modal-footer">
                 <input type="hidden" id="deleteUserId">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton" onclick="deleteUser()">Delete</button>
             </div>
         </div>
     </div>
@@ -235,4 +235,61 @@
 </div>
 {% endblock %}
 
-{% block extra_js %}{% endblock %}
+{% block extra_js %}
+<script>
+    // Función global para eliminar usuarios
+    async function deleteUser() {
+        try {
+            const userIdInput = document.getElementById('deleteUserId');
+            const modalElement = document.getElementById('deleteConfirmationModal');
+            
+            if (!userIdInput || !modalElement) {
+                console.error('No se encontró el input de ID de usuario o el modal');
+                return;
+            }
+            
+            const userId = Number(userIdInput.value);
+            if (!userId) {
+                console.error('ID de usuario inválido');
+                return;
+            }
+            
+            // Realizar la solicitud de eliminación
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('No se encontró el token de autenticación');
+                return;
+            }
+            
+            const response = await fetch(`/api/v1/users/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                console.log('Usuario eliminado correctamente');
+                
+                // Cerrar el modal
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                if (modal) {
+                    modal.hide();
+                }
+                
+                // Recargar la lista de usuarios
+                window.location.reload();
+            } else {
+                console.error('Error al eliminar el usuario:', data.detail || 'Error desconocido');
+                alert('Error al eliminar el usuario: ' + (data.detail || 'Error desconocido'));
+            }
+        } catch (error) {
+            console.error('Error al eliminar el usuario:', error);
+            alert('Error al eliminar el usuario: ' + error);
+        }
+    }
+</script>
+{% endblock %}

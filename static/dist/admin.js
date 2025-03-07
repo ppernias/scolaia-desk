@@ -117,10 +117,24 @@ class AdminPanel {
         }
     }
     showDeleteConfirmation(userId) {
+        var _a;
         const userIdInput = document.getElementById('deleteUserId');
         const modalElement = document.getElementById('deleteConfirmationModal');
         if (userIdInput && modalElement) {
             userIdInput.value = userId.toString();
+            // Configurar el event listener para el botu00f3n de confirmación de eliminación
+            // Esto es crucial: configuramos el event listener JUSTO ANTES de mostrar el modal
+            const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+            if (confirmDeleteButton) {
+                // Eliminar cualquier event listener existente para evitar duplicados
+                const newConfirmDeleteButton = confirmDeleteButton.cloneNode(true);
+                (_a = confirmDeleteButton.parentNode) === null || _a === void 0 ? void 0 : _a.replaceChild(newConfirmDeleteButton, confirmDeleteButton);
+                // Agregar el event listener al nuevo botu00f3n
+                newConfirmDeleteButton.addEventListener('click', () => {
+                    this.deleteUser();
+                });
+            }
+            // Mostrar el modal
             const modal = new bootstrap.Modal(modalElement);
             modal.show();
         }
@@ -149,6 +163,8 @@ class AdminPanel {
         }
     }
 }
+// Variable global para almacenar la instancia de AdminPanel
+let adminPanelInstance = null;
 // Initialize admin panel when DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
     // Verificar que tenemos un token válido
@@ -169,6 +185,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Inicializar el interceptor de fetch para autenticación
     setupFetchInterceptor();
     // Inicializar el panel de administración
-    const adminPanel = new AdminPanel();
+    adminPanelInstance = new AdminPanel();
+    // Agregar un event listener global para detectar clics en el botón de confirmación de eliminación
+    document.addEventListener('click', async (e) => {
+        const target = e.target;
+        if (target && target.getAttribute('data-action') === 'confirm-delete') {
+            console.log('Botón de confirmación de eliminación clickeado');
+            if (adminPanelInstance) {
+                await adminPanelInstance.deleteUser();
+            }
+        }
+    });
 });
 //# sourceMappingURL=admin.js.map
