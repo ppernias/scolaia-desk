@@ -77,30 +77,13 @@ async def create_assistant(
         # Get OpenAI configuration
         settings = await get_openai_settings(db)
         
-        # Check if model and temperature exist in settings
+        # Check if model exists in settings
         model = settings.get("model")
-        temperature_str = settings.get("temperature")
         if not model:
             raise HTTPException(
                 status_code=400,
                 detail="OpenAI model not found in settings. Please configure the model in settings."
             )
-        if temperature_str is None:
-            temperature = 1.0  # Default value as per OpenAI documentation
-        else:
-            # Convert temperature to float and validate range
-            try:
-                temperature = float(temperature_str)
-                if not 0 <= temperature <= 2:
-                    raise HTTPException(
-                        status_code=400,
-                        detail=f"Temperature value ({temperature}) must be between 0 and 2"
-                    )
-            except ValueError:
-                raise HTTPException(
-                    status_code=400,
-                    detail=f"Temperature value ({temperature_str}) must be a decimal number"
-                )
         
         # Extract name and instructions from YAML
         try:
@@ -135,8 +118,8 @@ async def create_assistant(
             "instructions": instructions,
             "name": name,
             "tools": [{"type": "code_interpreter"}, {"type": "file_search"}],
-            "model": model,
-            "temperature": temperature
+            "model": model
+            # Note: temperature is not supported in the Assistants API
         }
         
         # Add description only if present
