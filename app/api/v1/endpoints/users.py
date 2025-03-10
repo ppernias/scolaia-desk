@@ -103,6 +103,41 @@ async def read_user_me(
     """
     return current_user
 
+@router.put("/me", response_model=User)
+async def update_user_me(
+    *,
+    db: AsyncSession = Depends(get_db),
+    user_in: UserUpdate,
+    current_user: User = Depends(get_current_active_user),
+) -> Any:
+    """
+    Update own user profile.
+    
+    Allows users to update their own profile information including password.
+    Password is automatically hashed before storage.
+    """
+    user_obj = await user.get(db, id=current_user.id)
+    if not user_obj:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found",
+        )
+    
+    # Update the user
+    user_obj = await user.update(db, db_obj=user_obj, obj_in=user_in)
+    
+    return User(
+        id=user_obj.id,
+        email=user_obj.email,
+        fullname=user_obj.fullname,
+        is_active=user_obj.is_active,
+        is_admin=user_obj.is_admin,
+        is_approved=user_obj.is_approved,
+        creation_date=user_obj.creation_date,
+        last_login=user_obj.last_login,
+        token_count=user_obj.token_count
+    )
+
 @router.put("/{user_id}", response_model=User)
 async def update_user(
     *,

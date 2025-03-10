@@ -164,3 +164,46 @@ async def register_page(
         "register.html",
         {"request": request}
     )
+
+@router.get("/forgot-password", response_class=HTMLResponse)
+async def forgot_password_page(
+    request: Request,
+    db: AsyncSession = Depends(deps.get_db)
+):
+    """Render the forgot password page."""
+    # Get registration status for the base template
+    registration_setting = await setting_crud.get_by_category_and_key(db, category="General", key="registration_open")
+    registration_open = registration_setting and registration_setting.value.lower() == "true"
+    
+    return templates.TemplateResponse(
+        "forgot_password.html",
+        {
+            "request": request,
+            "registration_open": registration_open
+        }
+    )
+
+@router.get("/reset-password", response_class=HTMLResponse)
+async def reset_password_page(
+    request: Request,
+    token: str,
+    db: AsyncSession = Depends(deps.get_db)
+):
+    """Render the reset password page."""
+    # Get registration status for the base template
+    registration_setting = await setting_crud.get_by_category_and_key(db, category="General", key="registration_open")
+    registration_open = registration_setting and registration_setting.value.lower() == "true"
+    
+    # Validate token (but don't reveal if it's invalid to prevent user enumeration)
+    email = deps.security.verify_password_reset_token(token)
+    token_valid = email is not None
+    
+    return templates.TemplateResponse(
+        "reset_password.html",
+        {
+            "request": request,
+            "token": token,
+            "token_valid": token_valid,
+            "registration_open": registration_open
+        }
+    )

@@ -17,8 +17,9 @@ The module implements security best practices including:
 - Account status verification
 """
 
-from datetime import timedelta
-from typing import Any, List
+from datetime import timedelta, datetime
+import re
+from typing import Any, List, Dict
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,7 +30,7 @@ from app.core.config import settings
 from app.crud.crud_user import user
 from app.crud.crud_setting import setting as setting_crud
 from app.schemas.token import Token
-from app.schemas.user import User, UserCreate
+from app.schemas.user import User, UserCreate, PasswordResetRequest, PasswordReset, PasswordResetResponse
 from app.db.session import get_db
 from app.models.user import User as UserModel
 from app.core.email import send_email
@@ -233,3 +234,256 @@ async def get_registration_status(
     registration_setting = await setting_crud.get_by_category_and_key(db, category="General", key="registration_open")
     is_open = registration_setting and registration_setting.value.lower() == "true"
     return {"is_open": is_open}
+
+
+@router.post("/password-reset-request", response_model=PasswordResetResponse)
+async def request_password_reset(
+    *,
+    db: AsyncSession = Depends(get_db),
+    request_data: PasswordResetRequest,
+) -> Any:
+    """
+    Request a password reset for a user account.
+
+    Args:
+        db: Database session dependency
+        request_data: Contains the email address for the account to reset
+
+    Returns:
+        PasswordResetResponse: A message indicating the result of the operation
+
+    Notes:
+        - Always returns a success message even if the email doesn't exist for security reasons
+        - Sends an email with a password reset link if the account exists
+        - The reset link contains a secure token that expires after 24 hours
+    """
+    # Find the user by email
+    user_obj = await user.get_by_email(db, email=request_data.email)
+    
+    # If user exists and is active, send reset email
+    if user_obj and user_obj.is_active:
+        # Generate a password reset token
+        token = security.generate_password_reset_token(request_data.email)
+        
+        # Get email settings
+        email_settings = await setting_crud.get_by_category(db, "Email Configuration")
+        settings_dict = {s.key: s.value for s in email_settings}
+        
+        # Get general settings
+        general_settings = await setting_crud.get_by_category(db, "General")
+        settings_dict.update({s.key: s.value for s in general_settings})
+        
+        # Get base URL from settings
+        base_url = settings_dict.get("server_host", settings_dict.get("SERVER_HOST", "http://localhost:8000"))
+        
+        # Ensure URL is properly formatted
+        if not base_url.startswith('http'):
+            # Use the same protocol as the request
+            # Default to HTTP if we can't determine
+            base_url = f"http://{base_url}"
+        
+        # Remove trailing slashes
+        base_url = base_url.rstrip('/')
+        
+        # For local development, ensure we're using HTTP to avoid SSL errors
+        if 'localhost' in base_url or '127.0.0.1' in base_url or '0.0.0.0' in base_url:
+            base_url = base_url.replace('https://', 'http://')
+        
+        # For IP addresses, also use HTTP to avoid SSL errors
+        if re.match(r'https?://\d+\.\d+\.\d+\.\d+', base_url):
+            base_url = base_url.replace('https://', 'http://')
+        
+        # Create reset link
+        reset_link = f"{base_url}/reset-password?token={token}"
+        
+        # Create email content
+        email_content = f"""
+        Dear {user_obj.fullname},
+        
+        We received a request to reset your password for your ScolaIA account.
+        
+        To reset your password, please click on the following link or copy and paste it into your browser:
+        {reset_link}
+        
+        This link will expire in 24 hours.
+        
+        If you did not request a password reset, please ignore this email or contact support if you have concerns.
+        
+        Best regards,
+        ScolaIA Team
+        """
+        
+        try:
+            # Send the email
+            await send_email(
+                email_to=user_obj.email,
+                subject="ScolaIA - Password Reset Request",
+                content=email_content,
+                settings_dict=settings_dict
+            )
+        except Exception as e:
+            # Log the error but don't expose it to the user
+            print(f"Error sending password reset email: {str(e)}")
+    
+    # Send notification to all administrators
+    try:
+        # Find admin users to notify
+        stmt = select(UserModel).where(UserModel.is_admin == True)
+        result = await db.execute(stmt)
+        admin_users = result.scalars().all()
+        
+        if user_obj and user_obj.is_active and admin_users:
+            # Send email to all administrators
+            for admin in admin_users:
+                # Create admin notification content
+                admin_notification = f"""
+                Dear Administrator,
+                
+                A password reset has been requested for the following account:
+                
+                Name: {user_obj.fullname}
+                Email: {request_data.email}
+                Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+                
+                This is an automated security notification.
+                No action is required from you, but you may want to verify this activity
+                if it appears suspicious.
+                
+                Best regards,
+                ScolaIA System
+                """
+                
+                # Send notification to admin
+                await send_email(
+                    email_to=admin.email,
+                    subject="ScolaIA - Password Reset Request Alert",
+                    content=admin_notification,
+                    settings_dict=settings_dict
+                )
+    except Exception as e:
+        # Log the error but don't expose it to the user
+        print(f"Error sending admin notification: {str(e)}")
+    
+    # Always return a success message for security reasons
+    # This prevents user enumeration attacks
+    return {"message": "If the email exists in our system, a password reset link has been sent."}
+
+
+@router.post("/reset-password", response_model=PasswordResetResponse)
+async def reset_password(
+    *,
+    db: AsyncSession = Depends(get_db),
+    reset_data: PasswordReset,
+) -> Any:
+    """
+    Reset a user's password using a valid reset token.
+
+    Args:
+        db: Database session dependency
+        reset_data: Contains the reset token and new password
+
+    Returns:
+        PasswordResetResponse: A message indicating the result of the operation
+
+    Raises:
+        HTTPException: 
+            - 400 if the token is invalid or expired
+            - 404 if the user associated with the token doesn't exist
+
+    Notes:
+        - Verifies the token is valid and not expired
+        - Updates the user's password with a new hash
+        - Invalidates the token after successful use
+    """
+    # Verify the token and get the email
+    email = security.verify_password_reset_token(reset_data.token)
+    if not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired token",
+        )
+    
+    # Find the user by email
+    user_obj = await user.get_by_email(db, email=email)
+    if not user_obj:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+    
+    # Update the user's password
+    user_update = {"password": reset_data.password}
+    await user.update(db, db_obj=user_obj, obj_in=user_update)
+    
+    # Get email settings for confirmation email
+    email_settings = await setting_crud.get_by_category(db, "Email Configuration")
+    settings_dict = {s.key: s.value for s in email_settings}
+    
+    # Get general settings
+    general_settings = await setting_crud.get_by_category(db, "General")
+    settings_dict.update({s.key: s.value for s in general_settings})
+    
+    # Create confirmation email content
+    email_content = f"""
+    Dear {user_obj.fullname},
+    
+    Your password for ScolaIA has been successfully reset.
+    
+    If you did not make this change, please contact support immediately.
+    
+    Best regards,
+    ScolaIA Team
+    """
+    
+    try:
+        # Send confirmation email
+        await send_email(
+            email_to=user_obj.email,
+            subject="ScolaIA - Password Reset Successful",
+            content=email_content,
+            settings_dict=settings_dict
+        )
+    except Exception as e:
+        # Log the error but continue with the response
+        print(f"Error sending password reset confirmation email: {str(e)}")
+    
+    # Send notification to all administrators about successful password reset
+    try:
+        # Find admin users to notify
+        stmt = select(UserModel).where(UserModel.is_admin == True)
+        result = await db.execute(stmt)
+        admin_users = result.scalars().all()
+        
+        if user_obj and admin_users:
+            # Send email to all administrators
+            for admin in admin_users:
+                # Create admin notification content
+                admin_notification = f"""
+                Dear Administrator,
+                
+                A password has been successfully reset for the following account:
+                
+                Name: {user_obj.fullname}
+                Email: {user_obj.email}
+                Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+                
+                This is an automated security notification.
+                No action is required from you, but you may want to verify this activity
+                if it appears suspicious.
+                
+                Best regards,
+                ScolaIA System
+                """
+                
+                # Send notification to admin
+                await send_email(
+                    email_to=admin.email,
+                    subject="ScolaIA - Password Reset Completed Alert",
+                    content=admin_notification,
+                    settings_dict=settings_dict
+                )
+    except Exception as e:
+        # Log the error but continue with the response
+        print(f"Error sending admin notification for password reset completion: {str(e)}")
+    
+    return {"message": "Password has been reset successfully."}

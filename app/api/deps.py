@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
+from app.core import security
 from app.core.security import ALGORITHM
 from app.crud.crud_user import user
 from app.db.session import get_db

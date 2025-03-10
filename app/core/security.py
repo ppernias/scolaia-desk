@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
-from typing import Any, Union
-from jose import jwt
+from typing import Any, Union, Optional, Tuple
+import secrets
+from jose import jwt, JWTError
 from passlib.context import CryptContext
 from cryptography.fernet import Fernet
 import base64
 import hashlib
+import secrets
 
 from app.core.config import settings
 
@@ -52,3 +54,63 @@ def decrypt_setting(encrypted_value: str) -> str:
         return fernet.decrypt(encrypted_value.encode()).decode()
     except Exception as e:
         raise ValueError("Failed to decrypt setting value") from e
+
+
+def generate_password_reset_token(email: str) -> str:
+    """
+    Generate a password reset token for the given email.
+    
+    Args:
+        email: The email address of the user requesting password reset
+        
+    Returns:
+        str: A secure token that can be used to reset the password
+    """
+    # Current time for token creation
+    now = datetime.utcnow()
+    
+    # Token expiration (default: 24 hours)
+    expires = now + timedelta(hours=24)
+    
+    # Add some randomness to the token
+    random_part = secrets.token_hex(8)
+    
+    # Create the payload
+    payload = {
+        "exp": expires,
+        "nbf": now,  # Not valid before current time
+        "sub": email,  # Subject is the user's email
+        "type": "password-reset",  # Token type
+        "jti": random_part,  # Unique token ID
+    }
+    
+    # Encode the token
+    return jwt.encode(payload, settings.SECRET_KEY, algorithm=ALGORITHM)
+
+
+def verify_password_reset_token(token: str) -> Optional[str]:
+    """
+    Verify a password reset token and extract the email if valid.
+    
+    Args:
+        token: The password reset token to verify
+        
+    Returns:
+        Optional[str]: The email address if token is valid, None otherwise
+    """
+    try:
+        # Decode the token
+        payload = jwt.decode(
+            token, 
+            settings.SECRET_KEY, 
+            algorithms=[ALGORITHM]
+        )
+        
+        # Verify token type
+        if payload.get("type") != "password-reset":
+            return None
+            
+        # Extract and return the email
+        return payload.get("sub")
+    except JWTError:
+        return None
