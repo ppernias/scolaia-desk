@@ -266,7 +266,37 @@ export async function handleRegister(e: Event): Promise<void> {
     }
 }
 
+// Global variable to track if we're in the process of logging out
+let isLoggingOut = false;
+
+// Function to close WebSocket connections gracefully
+function closeWebSocketConnections(): void {
+    // Find and close the chat WebSocket if it exists
+    // This is a safer approach than trying to iterate through window properties
+    const chatSocket = (window as any).chatWebSocket;
+    if (chatSocket && chatSocket.socket && chatSocket.socket instanceof WebSocket) {
+        try {
+            // Close with code 1000 (normal closure)
+            chatSocket.socket.close(1000, 'User logged out');
+            console.log('WebSocket connection closed successfully');
+        } catch (e) {
+            console.error('Error closing WebSocket:', e);
+        }
+    }
+}
+
 export function logout(): void {
+    // Set the logging out flag to prevent reconnection attempts
+    isLoggingOut = true;
+    
+    // Close any active WebSocket connections
+    closeWebSocketConnections();
+    
+    // Clear authentication tokens
     clearAuthToken();
-    window.location.href = '/';
+    
+    // Small delay to allow WebSockets to close properly
+    setTimeout(() => {
+        window.location.href = '/';
+    }, 300);
 }

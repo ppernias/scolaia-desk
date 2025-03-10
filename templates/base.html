@@ -24,6 +24,8 @@
         {% if registration_open %}
             {% include 'components/modals/register.html' %}
         {% endif %}
+    {% else %}
+        {% include 'components/modals/user_profile.html' %}
     {% endif %}
 
     <!-- Main Content -->

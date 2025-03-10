@@ -50,7 +50,9 @@
                 {% if user %}
                     <!-- Authenticated User Navigation -->
                     <li class="nav-item">
-                        <span class="nav-link">Welcome, {{ user.fullname }}!</span>
+                        <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#userProfileModal">
+                            <i class="fas fa-user-circle me-1"></i>{{ user.fullname }}
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/ws-chat" 

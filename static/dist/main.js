@@ -1,5 +1,6 @@
 import { setupEventListeners, setupNavigationHandlers } from './eventHandlers.js';
 import { setupFetchInterceptor } from './auth.js';
+import './profile.js';
 class ScolaIA {
     constructor() {
         this.currentUser = null;

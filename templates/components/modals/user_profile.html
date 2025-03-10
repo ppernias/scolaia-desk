@@ -1,0 +1,116 @@
+<!--
+    User Profile Modal Component
+    
+    This component implements the user profile editing functionality through a Bootstrap modal dialog.
+    It provides a clean interface for users to update their personal information and password.
+
+    Features:
+    - Edit personal information (name, email)
+    - Change password
+    - Form validation
+    - Responsive design
+    - Accessible UI elements
+
+    Integration:
+    - Uses Bootstrap's modal system
+    - Connects with the user API endpoints
+    - Handled by auth.js for form submission and validation
+-->
+{% block user_profile_modal %}
+<!-- User Profile Dialog -->
+<div class="modal fade" id="userProfileModal" tabindex="-1" aria-labelledby="userProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="userProfileModalLabel">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <!-- Profile Form -->
+            <div class="modal-body">
+                <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" 
+                                data-bs-target="#profile-tab-pane" type="button" role="tab" 
+                                aria-controls="profile-tab-pane" aria-selected="true">Profile</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="password-tab" data-bs-toggle="tab" 
+                                data-bs-target="#password-tab-pane" type="button" role="tab" 
+                                aria-controls="password-tab-pane" aria-selected="false">Change Password</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content pt-3" id="profileTabsContent">
+                    <!-- Profile Information Tab -->
+                    <div class="tab-pane fade show active" id="profile-tab-pane" role="tabpanel" 
+                         aria-labelledby="profile-tab" tabindex="0">
+                        <form id="profileForm" novalidate>
+                            <!-- Full Name Field -->
+                            <div class="mb-3">
+                                <label for="profileFullname" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="profileFullname" 
+                                       name="fullname" required value="{{ user.fullname }}">
+                            </div>
+                            
+                            <!-- Email Field -->
+                            <div class="mb-3">
+                                <label for="profileEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="profileEmail" 
+                                       name="email" required value="{{ user.email }}" 
+                                       aria-describedby="emailHelp">
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary">
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Change Password Tab -->
+                    <div class="tab-pane fade" id="password-tab-pane" role="tabpanel" 
+                         aria-labelledby="password-tab" tabindex="0">
+                        <form id="passwordForm" novalidate>
+                            <!-- Current Password Field -->
+                            <div class="mb-3">
+                                <label for="currentPassword" class="form-label">Current Password</label>
+                                <input type="password" class="form-control" id="currentPassword" 
+                                       name="current_password" required>
+                            </div>
+                            
+                            <!-- New Password Field -->
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">New Password</label>
+                                <input type="password" class="form-control" id="newPassword" 
+                                       name="password" required>
+                                <div class="form-text">Password must be at least 8 characters long.</div>
+                            </div>
+                            
+                            <!-- Confirm Password Field -->
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" 
+                                       name="confirm_password" required>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="/forgot-password" class="text-decoration-none small">
+                                    Forgot your password?
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    Change Password
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

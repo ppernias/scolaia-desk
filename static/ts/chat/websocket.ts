@@ -578,6 +578,10 @@ class ChatWebSocket {
     }
 }
 
+// Add chatWebSocket to the window object
+// We'll use a type assertion approach instead of global augmentation
+// to avoid TypeScript errors in this module context
+
 // Initialize WebSocket chat when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     // Make sure marked is available
@@ -590,6 +594,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Initialize WebSocket chat
-    new ChatWebSocket();
+    // Check if we're in the process of logging out
+    const isLoggingOut = (window as any).isLoggingOut;
+    if (isLoggingOut) {
+        console.log('Skipping WebSocket initialization during logout');
+        return;
+    }
+
+    // Initialize WebSocket chat and expose it to the window object
+    const chatInstance = new ChatWebSocket();
+    (window as any).chatWebSocket = chatInstance;
 });

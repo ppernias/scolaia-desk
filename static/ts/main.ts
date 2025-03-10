@@ -1,5 +1,6 @@
 import { setupEventListeners, setupNavigationHandlers } from './eventHandlers.js';
 import { setupFetchInterceptor } from './auth.js';
+import './profile.js';
 
 interface User {
     id: number;
