@@ -9,7 +9,6 @@ from app.api import deps
 from app.models.user import User
 from app.schemas.setting import Setting, SettingCreate, SettingUpdate
 from app.core.security import encrypt_setting, decrypt_setting
-from app.core.config import Settings
 from app.core.email import send_test_email
 
 router = APIRouter()
@@ -145,18 +144,17 @@ async def test_email_configuration(
     """
     try:
         # Get email settings
-        settings_list = await setting.get_multi(db)
+        settings_list = await setting.get_by_category(db, "Email Configuration")
         email_settings = {}
         
         for s in settings_list:
-            if s.key.startswith("SMTP_"):
-                if s.is_encrypted:
-                    email_settings[s.key] = decrypt_setting(s.value)
-                else:
-                    email_settings[s.key] = s.value
+            if s.is_encrypted:
+                email_settings[s.key] = decrypt_setting(s.value)
+            else:
+                email_settings[s.key] = s.value
         
         # Check if we have all required settings
-        required_settings = ["SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASSWORD", "EMAILS_FROM_EMAIL"]
+        required_settings = ["smtp_host", "smtp_tls_port", "smtp_user", "smtp_password", "smtp_from_email"]
         missing_settings = [s for s in required_settings if s not in email_settings or not email_settings[s]]
         
         if missing_settings:
@@ -165,13 +163,8 @@ async def test_email_configuration(
                 detail=f"Missing required email settings: {', '.join(missing_settings)}"
             )
         
-        # Create settings object
-        config = Settings()
-        for key, value in email_settings.items():
-            setattr(config, key, value)
-        
         # Send test email to current user
-        await send_test_email(email_to=current_user.email, settings=config)
+        await send_test_email(email_to=current_user.email, settings_dict=email_settings)
         
         return {"message": f"Test email sent to {current_user.email}"}
     except Exception as e:

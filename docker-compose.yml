@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  scolaia:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount .env file for configuration
+      - ./.env:/app/.env
+      # Mount database directory for persistence
+      - ./data:/app/data
+    restart: unless-stopped
+    environment:
+      # These environment variables can be overridden in .env file
+      - TZ=UTC
+    # Healthcheck to ensure the application is running properly
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s 
