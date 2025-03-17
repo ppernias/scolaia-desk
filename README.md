@@ -252,3 +252,27 @@ PyYAML==5.4.1 --global-option=--without-libyaml
   - All existing user sessions will be invalidated
   - Previously encrypted data will become unreadable
 - Store your production SECRET_KEY securely and consider using a secret management solution for production deployments.
+
+
+## Licene of Use: Apache 2.0 @2025, Pedro A Pernias
+
+1. Grant of Rights
+
+You are free to use, copy, modify, and distribute covered works, including for commercial purposes.
+You do not have to release your modifications under the same license, but you must maintain the required notices and disclaimers.
+2. Patent Protection
+
+The license includes a patent grant: contributors automatically provide users with a license to their patents related to the contributed code.
+This grant terminates if you engage in a patent lawsuit claiming that the software infringes your patents.
+3. Requirements and Notices
+
+You must include a copy of the Apache License 2.0 and the original copyright statements with any copies or substantial portions of the software.
+If you modify the software, you should note significant changes in your source files.
+4. Disclaimer of Warranty and Limitation of Liability
+
+The software is provided “as is,” without warranties or conditions of any kind.
+Neither the authors nor contributors accept liability for any damages arising from its use.
+5. Trademark Use
+
+The license does not grant permission to use contributors’ trademarks. Separate permission may be required.
+For full details, please refer to the Apache License 2.0 text. If you have specific concerns, consult a qualified legal professional.
