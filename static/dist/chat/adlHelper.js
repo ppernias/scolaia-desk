@@ -20,13 +20,16 @@ class ADLHelper {
             commandsTab: null,
             optionsTab: null,
             decoratorsTab: null,
+            workflowsTab: null,
             commandsSection: null,
             optionsSection: null,
-            decoratorsSection: null
+            decoratorsSection: null,
+            workflowsSection: null
         };
         this.commands = []; // Available commands from the ADL
         this.options = []; // Available options from the ADL
         this.decorators = []; // Available decorators from the ADL
+        this.workflows = []; // Available workflows from the ADL
         this.isCollapsed = false; // Track collapsed state of the helper panel
         this.activeTab = 'commands'; // Currently active tab
         this.assistantName = 'Assistant'; // Name of the current assistant
@@ -97,9 +100,14 @@ class ADLHelper {
         this.elements.commandsTab = this.createTab('Commands', 'commands');
         this.elements.optionsTab = this.createTab('Options', 'options');
         this.elements.decoratorsTab = this.createTab('Decorators', 'decorators');
-        this.elements.tabs.appendChild(this.elements.commandsTab);
-        this.elements.tabs.appendChild(this.elements.optionsTab);
-        this.elements.tabs.appendChild(this.elements.decoratorsTab);
+        this.elements.workflowsTab = this.createTab('Workflows', 'workflows');
+        // Add tabs to the tab container
+        if (this.elements.tabs) {
+            this.elements.tabs.appendChild(this.elements.commandsTab);
+            this.elements.tabs.appendChild(this.elements.optionsTab);
+            this.elements.tabs.appendChild(this.elements.decoratorsTab);
+            this.elements.tabs.appendChild(this.elements.workflowsTab);
+        }
         // Create the content container for displaying ADL elements
         this.elements.content = document.createElement('div');
         this.elements.content.className = 'adl-content';
@@ -107,10 +115,14 @@ class ADLHelper {
         this.elements.commandsSection = this.createSection('commands');
         this.elements.optionsSection = this.createSection('options');
         this.elements.decoratorsSection = this.createSection('decorators');
+        this.elements.workflowsSection = this.createSection('workflows');
         // Add sections to the content container
-        this.elements.content.appendChild(this.elements.commandsSection);
-        this.elements.content.appendChild(this.elements.optionsSection);
-        this.elements.content.appendChild(this.elements.decoratorsSection);
+        if (this.elements.content) {
+            this.elements.content.appendChild(this.elements.commandsSection);
+            this.elements.content.appendChild(this.elements.optionsSection);
+            this.elements.content.appendChild(this.elements.decoratorsSection);
+            this.elements.content.appendChild(this.elements.workflowsSection);
+        }
         // Add all elements to the main container
         this.elements.container.appendChild(this.elements.header);
         this.elements.container.appendChild(this.elements.tabs);
@@ -191,42 +203,71 @@ class ADLHelper {
      */
     async loadADLElements() {
         try {
-            // Load commands from the ADL API endpoint
+            // Fetch commands
             const commandsResponse = await this.fetchAdlCommands();
-            if (commandsResponse.success && commandsResponse.data) {
-                const commandsData = commandsResponse.data.commands;
-                this.commands = Object.entries(commandsData).map(([key, value]) => ({
+            if (commandsResponse.success && commandsResponse.data.commands) {
+                // Convert object to array for commands
+                const commandsObj = commandsResponse.data.commands;
+                this.commands = Object.keys(commandsObj).map(key => ({
                     id: key,
-                    displayName: value.display_name || key.replace('/', ''),
-                    description: value.description || '',
+                    displayName: commandsObj[key].display_name,
+                    description: commandsObj[key].description,
                     prefix: '/'
                 }));
-                this.renderElements(this.commands, this.elements.commandsSection);
             }
-            // Load options from the ADL API endpoint
+            else {
+                console.error('Error loading commands:', commandsResponse.error || 'No commands data found');
+            }
+            // Fetch options
             const optionsResponse = await this.fetchAdlOptions();
-            if (optionsResponse.success && optionsResponse.data) {
-                const optionsData = optionsResponse.data.options;
-                this.options = Object.entries(optionsData).map(([key, value]) => ({
+            if (optionsResponse.success && optionsResponse.data.options) {
+                // Convert object to array for options
+                const optionsObj = optionsResponse.data.options;
+                this.options = Object.keys(optionsObj).map(key => ({
                     id: key,
-                    displayName: value.display_name || key.replace('/', ''),
-                    description: value.description || '',
+                    displayName: optionsObj[key].display_name,
+                    description: optionsObj[key].description,
                     prefix: '/'
                 }));
-                this.renderElements(this.options, this.elements.optionsSection);
             }
-            // Load decorators from the ADL API endpoint
+            else {
+                console.error('Error loading options:', optionsResponse.error || 'No options data found');
+            }
+            // Fetch decorators
             const decoratorsResponse = await this.fetchAdlDecorators();
-            if (decoratorsResponse.success && decoratorsResponse.data) {
-                const decoratorsData = decoratorsResponse.data.decorators;
-                this.decorators = Object.entries(decoratorsData).map(([key, value]) => ({
+            if (decoratorsResponse.success && decoratorsResponse.data.decorators) {
+                // Convert object to array for decorators
+                const decoratorsObj = decoratorsResponse.data.decorators;
+                this.decorators = Object.keys(decoratorsObj).map(key => ({
                     id: key,
-                    displayName: value.display_name || key.replace('+++', ''),
-                    description: value.description || '',
+                    displayName: decoratorsObj[key].display_name,
+                    description: decoratorsObj[key].description,
                     prefix: '+++'
                 }));
-                this.renderElements(this.decorators, this.elements.decoratorsSection);
             }
+            else {
+                console.error('Error loading decorators:', decoratorsResponse.error || 'No decorators data found');
+            }
+            // Fetch workflows
+            const workflowsResponse = await this.fetchAdlWorkflows();
+            if (workflowsResponse.success && workflowsResponse.data.workflows) {
+                // Workflows are already an array in the response
+                this.workflows = workflowsResponse.data.workflows.map((workflow) => ({
+                    id: workflow.id,
+                    displayName: workflow.display_name,
+                    description: workflow.description,
+                    prefix: 'workflow',
+                    sequence: workflow.sequence
+                }));
+            }
+            else {
+                console.error('Error loading workflows:', workflowsResponse.error || 'No workflows data found');
+            }
+            // Render elements to their respective sections
+            this.renderElements(this.commands, this.elements.commandsSection);
+            this.renderElements(this.options, this.elements.optionsSection);
+            this.renderElements(this.decorators, this.elements.decoratorsSection);
+            this.renderElements(this.workflows, this.elements.workflowsSection);
         }
         catch (error) {
             console.error('Error loading ADL elements:', error);
@@ -326,6 +367,37 @@ class ADLHelper {
         }
     }
     /**
+     * Fetches workflows from the ADL API
+     * @returns API response with workflows data
+     */
+    async fetchAdlWorkflows() {
+        try {
+            const response = await fetch('/api/v1/adl/workflows', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                const error = await response.json();
+                return {
+                    success: false,
+                    error: error.detail || 'Failed to list ADL workflows'
+                };
+            }
+            return {
+                success: true,
+                data: await response.json()
+            };
+        }
+        catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to list ADL workflows'
+            };
+        }
+    }
+    /**
      * Renders ADL elements to the UI
      * @param elements - Array of ADL elements to render
      * @param container - Container element to render into
@@ -354,6 +426,9 @@ class ADLHelper {
             else if (element.prefix === '+++') {
                 badgeClass += 'badge-decorator';
             }
+            else if (element.prefix === 'workflow') {
+                badgeClass += 'badge-workflow';
+            }
             badge.className = badgeClass;
             badge.textContent = element.displayName;
             badge.title = element.description;
@@ -361,11 +436,29 @@ class ADLHelper {
             badge.setAttribute('data-bs-toggle', 'tooltip');
             badge.setAttribute('data-bs-placement', 'top');
             badge.setAttribute('data-bs-title', element.description);
-            // Add click event to insert the command/option/decorator
+            // Add click event to insert the command/option/decorator/workflow
             badge.addEventListener('click', () => {
                 let textToInsert = '';
                 if (element.prefix === '+++') {
                     textToInsert = `${element.prefix}${element.id.replace('+++', '')} `;
+                }
+                else if (element.prefix === 'workflow') {
+                    // For workflows, we need to handle the sequence
+                    const workflow = element;
+                    if (workflow.sequence && workflow.sequence.length > 0) {
+                        // Insert the first command of the workflow
+                        const firstStep = workflow.sequence[0];
+                        textToInsert = `${firstStep.command} `;
+                        // If there are decorators, add them after the command
+                        if (firstStep.decorators && firstStep.decorators.length > 0) {
+                            firstStep.decorators.forEach(decorator => {
+                                textToInsert += `${decorator} `;
+                            });
+                        }
+                    }
+                    else {
+                        textToInsert = `${element.id} `;
+                    }
                 }
                 else {
                     textToInsert = `${element.id} `;

@@ -269,6 +269,89 @@ async def list_decorators(
             detail=f"Error parsing ADL configuration: {str(e)}"
         )
 
+@router.get("/workflows")
+async def list_workflows(
+    *,
+    db: AsyncSession = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_active_user),
+    format: str = Query("full", description="Format of the response. Can be 'full', 'simple', or 'names'")
+) -> Any:
+    """
+    List all available workflows in the ADL.
+    format can be:
+    - 'full': Returns complete workflow information
+    - 'simple': Returns workflow name and description
+    - 'names': Returns only workflow names
+    """
+    # Obtener el ADL de la base de datos
+    settings = await setting.get_multi(db)
+    adl_setting = next((s for s in settings if s.key == 'Assistant ADL'), None)
+    
+    if not adl_setting or not adl_setting.value:
+        raise HTTPException(
+            status_code=404,
+            detail="ADL configuration not found"
+        )
+    
+    try:
+        # Parsear el YAML
+        adl_data = yaml.safe_load(adl_setting.value)
+        
+        # Obtener los workflows
+        try:
+            workflows = get_value_from_path(adl_data, "assistant_instructions.tools.workflows")
+        except HTTPException:
+            # Si no se encuentra la ruta, devolver un objeto vacío
+            return {"workflows": []}
+        
+        # Convertir workflows a una lista si es un diccionario
+        if isinstance(workflows, dict):
+            workflows = [
+                {
+                    "id": key,
+                    "display_name": workflow.get("display_name", key),
+                    "description": workflow.get("description", "No description available"),
+                    "sequence": workflow.get("sequence", [])
+                }
+                for key, workflow in workflows.items()
+            ]
+        elif not isinstance(workflows, list):
+            workflows = []
+        
+        if format == "names":
+            return {
+                "workflows": [workflow.get("display_name") for workflow in workflows]
+            }
+        elif format == "simple":
+            return {
+                "workflows": [
+                    {
+                        "id": i,
+                        "display_name": workflow.get("display_name", f"Workflow {i}"),
+                        "description": workflow.get("description", "No description available")
+                    }
+                    for i, workflow in enumerate(workflows)
+                ]
+            }
+        else:  # full
+            return {
+                "workflows": [
+                    {
+                        "id": i,
+                        "display_name": workflow.get("display_name", f"Workflow {i}"),
+                        "description": workflow.get("description", "No description available"),
+                        "sequence": workflow.get("sequence", [])
+                    }
+                    for i, workflow in enumerate(workflows)
+                ]
+            }
+        
+    except yaml.YAMLError as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error parsing ADL configuration: {str(e)}"
+        )
+
 @router.get("/download", response_class=Response)
 async def download_adl_yaml(
     db: AsyncSession = Depends(deps.get_db),

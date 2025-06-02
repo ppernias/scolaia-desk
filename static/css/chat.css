@@ -359,9 +359,10 @@
     gap: 0.3rem;
 }
 
-.badge-command, .badge-option, .badge-decorator {
-    border-radius: 1rem;
-    padding: 0.4rem 0.8rem;
+.badge-command, .badge-option, .badge-decorator, .badge-workflow {
+    margin: 0.2rem;
+    border-radius: 0.5rem;
+    padding: 0.3rem 0.7rem;
     transition: all 0.2s ease;
     font-size: 0.85rem;
     color: white;
@@ -380,7 +381,11 @@
     background-color: var(--primary-dark);
 }
 
-.badge-command:hover, .badge-option:hover, .badge-decorator:hover {
+.badge-workflow {
+    background-color: var(--accent-color, #6c757d);
+}
+
+.badge-command:hover, .badge-option:hover, .badge-decorator:hover, .badge-workflow:hover {
     opacity: 0.9;
     transform: translateY(-1px);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
